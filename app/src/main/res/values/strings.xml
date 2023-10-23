@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Easy Notebook</string>
+    <string name="heading_placeholder">Heading</string>
+    <string name="change_color">Change color</string>
+    <string name="add_note">Add</string>
+    <string name="txt">Text</string>
+    <string name="check_list">Checklist</string>
+</resources>
