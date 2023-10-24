@@ -132,8 +132,7 @@ fun UpdateNote(viewModel: NotesViewModel, navController: NavController) {
 
             )
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(text = "Edited:Now", modifier = Modifier.padding(start = 14.dp))
                 Icon(Icons.Default.DateRange, contentDescription = null)
@@ -142,8 +141,7 @@ fun UpdateNote(viewModel: NotesViewModel, navController: NavController) {
                 note.items.firstOrNull()?.let {
 
                     OutlinedTextField(
-                        modifier = Modifier
-                            .fillMaxSize(),
+                        modifier = Modifier.fillMaxSize(),
                         value = it.text,
                         onValueChange = { viewModel.updateTextNote(it) },
                         textStyle = MaterialTheme.typography.bodyMedium,
@@ -160,7 +158,7 @@ fun UpdateNote(viewModel: NotesViewModel, navController: NavController) {
                         Row {
 
                             Checkbox(checked = nodeItem.isComplete, onCheckedChange = {
-
+                                viewModel.updateNoteItemCheckBox(index)
                             })
                             OutlinedTextField(
                                 modifier = Modifier
@@ -168,7 +166,7 @@ fun UpdateNote(viewModel: NotesViewModel, navController: NavController) {
                                     .fillMaxHeight(.6f),
                                 value = nodeItem.text,
                                 onValueChange = {
-
+                                    viewModel.updateNoteItem(index, it)
 
                                 },
                                 textStyle = MaterialTheme.typography.bodyMedium
@@ -178,7 +176,7 @@ fun UpdateNote(viewModel: NotesViewModel, navController: NavController) {
                     }
                 }
                 TextButton(onClick = {
-
+                    viewModel.addNoteItem()
                 }) {
                     Icon(Icons.Default.Add, contentDescription = null)
                     Text(text = "Add")

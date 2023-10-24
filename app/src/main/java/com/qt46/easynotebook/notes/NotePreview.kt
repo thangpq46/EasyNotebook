@@ -7,16 +7,23 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextDecoration
@@ -28,7 +35,8 @@ fun NotePreview(noteWithNoteItem: NoteWithNoteItem,noteColor:Long,onClick:()->Un
     Card(
         modifier = Modifier
             .width(180.dp)
-            .height(220.dp).clickable { onClick() }, shape = RoundedCornerShape(5.dp)
+            .height(220.dp)
+            .clickable { onClick() }, shape = RoundedCornerShape(5.dp)
     ) {
         Row {
             Spacer(
@@ -43,12 +51,22 @@ fun NotePreview(noteWithNoteItem: NoteWithNoteItem,noteColor:Long,onClick:()->Un
                     .padding(9.dp)
             ) {
                 Text(text = noteWithNoteItem.note.heading, style = MaterialTheme.typography.titleMedium, maxLines = 1)
+                Text(text = noteWithNoteItem.note.createdDate)
+                Divider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = MaterialTheme.colorScheme.onBackground)
+                
                 LazyColumn {
                     items(items = noteWithNoteItem.items) {
-                        Text(
-                            text = it.text,
-                            textDecoration = if (it.isComplete) TextDecoration.LineThrough else null
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (noteWithNoteItem.note.isCheckBox){
+                                Checkbox(checked = it.isComplete, onCheckedChange = {}, enabled = false)
+                            }
+                            Text(
+                                text = it.text,
+                                textDecoration = if (it.isComplete) TextDecoration.LineThrough else null
+                            )
+
+                        }
+
                     }
                 }
             }

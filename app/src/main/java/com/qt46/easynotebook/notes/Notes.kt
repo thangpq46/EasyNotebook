@@ -1,5 +1,6 @@
 package com.qt46.easynotebook.notes
 
+import android.app.Activity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,6 +32,7 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -46,6 +48,7 @@ fun Notes(
     selectTypeText: () -> Unit,
     selectTypeCheckList: () -> Unit
 ){
+    val activity = LocalContext.current as Activity
     val notes by viewModel.n.collectAsState()
     val categories by viewModel.categories.collectAsState()
 
@@ -82,7 +85,7 @@ fun Notes(
         .fillMaxSize()
         .padding(horizontal = 16.dp)) {
         TopAppBar(title = { }, navigationIcon = {
-            IconButton(onClick = { navController.popBackStack() }) {
+            IconButton(onClick = { activity.finish() }) {
                 Icon(Icons.Default.ArrowBack, contentDescription = null)
             }
         }, actions = {

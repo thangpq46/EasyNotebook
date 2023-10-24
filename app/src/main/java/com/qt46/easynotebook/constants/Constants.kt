@@ -2,6 +2,10 @@ package com.qt46.easynotebook.constants
 
 import androidx.compose.ui.graphics.Color
 import com.qt46.easynotebook.data.NoteCategory
+import java.time.format.DateTimeFormatter
+
+
+
 
 val NoteCategorys = listOf(
     NoteCategory(text = "Work"),
@@ -15,3 +19,5 @@ val NoteCategorys = listOf(
 )
 const val FIRST_TIME="first_time"
 val a = Color(0xFF673AB7)
+
+var formatter = DateTimeFormatter.ofPattern("MM-dd")

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.qt46.easynotebook.MyApplication
 import com.qt46.easynotebook.constants.NoteCategorys
+import com.qt46.easynotebook.constants.formatter
 import com.qt46.easynotebook.data.Note
 import com.qt46.easynotebook.data.NoteCategory
 import com.qt46.easynotebook.data.NoteRepository
@@ -27,6 +28,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 
 enum class SortBy {
@@ -115,7 +117,7 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
                 }
             }
 
-        }
+        } 
     }
 
     fun setCategory(category: NoteCategory) {
@@ -132,7 +134,8 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
 
     fun updateCurrentNote() {
         viewModelScope.launch {
-            repository.addNote(_currentNote.value.note)
+            repository.addNote(_currentNote.value.note.copy(modifiedTime = formatter.format(
+                LocalDateTime.now())))
             for (item in _currentNote.value.items){
                 repository.addNoteItem(item)
             }
@@ -163,6 +166,21 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
         _currentNote.update {
             it.copy(items = it.items.toMutableList().apply {
                 this[index]=this[index].copy(text=text)
+            })
+        }
+    }
+
+    fun updateNoteItemCheckBox(index: Int) {
+        _currentNote.update {
+            it.copy(items = it.items.toMutableList().apply {
+                this[index]=this[index].copy(isComplete = !this[index].isComplete)
+            })
+        }
+    }
+    fun addNoteItem(){
+        _currentNote.update {
+            it.copy(items = it.items.toMutableList().apply {
+                add(NoteItem(text = "", noteId = it.note.noteId))
             })
         }
     }
