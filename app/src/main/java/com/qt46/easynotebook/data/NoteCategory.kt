@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "category")
 data class NoteCategory(
-    @PrimaryKey(autoGenerate = true) val categoryid: Long=0,
-    @ColumnInfo var text: String="",
+    @PrimaryKey(autoGenerate = true) val categoryid: Long = 0,
+    @ColumnInfo var text: String = "",
     @ColumnInfo val color: Long = 0xFFFAC029
-    )
+)

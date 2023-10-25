@@ -4,8 +4,8 @@ import android.content.Context
 import com.qt46.easynotebook.data.DataSource
 import com.qt46.easynotebook.data.Note
 import com.qt46.easynotebook.data.NoteCategory
-import com.qt46.easynotebook.data.local.relations.NoteWithNoteItem
 import com.qt46.easynotebook.data.NoteItem
+import com.qt46.easynotebook.data.local.relations.NoteWithNoteItem
 import kotlinx.coroutines.flow.Flow
 
 class LocalDataSource(context: Context, private val dao: NoteDao) : DataSource {
@@ -14,7 +14,7 @@ class LocalDataSource(context: Context, private val dao: NoteDao) : DataSource {
     }
 
     override suspend fun addCateGory(category: NoteCategory) {
-         dao.addCategory(category)
+        dao.addCategory(category)
     }
 
     override suspend fun addNoteItem(noteItem: NoteItem): Long {
@@ -33,5 +33,5 @@ class LocalDataSource(context: Context, private val dao: NoteDao) : DataSource {
         return dao.getAllCategory()
     }
 
-    override fun getAllNoteFlow(): Flow<List<NoteWithNoteItem>> =dao.getAllNoteWithNoteItemsFlow()
+    override fun getAllNoteFlow(): Flow<List<NoteWithNoteItem>> = dao.getAllNoteWithNoteItemsFlow()
 }

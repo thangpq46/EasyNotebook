@@ -11,26 +11,31 @@ import com.qt46.easynotebook.data.NoteItem
 @Database(
     entities = [
         Note::class,
-    NoteCategory::class,
-    NoteItem::class
+        NoteCategory::class,
+        NoteItem::class
     ],
     version = 1,
     exportSchema = false
 )
 abstract class NoteDatabase : RoomDatabase() {
     abstract fun pdfDao(): NoteDao
-    companion object{
+
+    companion object {
         @Volatile
-        private var INSTANCE : NoteDatabase? = null
-        fun getDatabase(context: Context):NoteDatabase{
+        private var INSTANCE: NoteDatabase? = null
+        fun getDatabase(context: Context): NoteDatabase {
 
             val tempInstance = INSTANCE
-            if (tempInstance!=null){
+            if (tempInstance != null) {
                 return tempInstance
             }
-            synchronized(this){
-                val instance = Room.databaseBuilder(context.applicationContext,NoteDatabase::class.java,"note_db").fallbackToDestructiveMigration().build()
-                INSTANCE=instance
+            synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    NoteDatabase::class.java,
+                    "note_db"
+                ).fallbackToDestructiveMigration().build()
+                INSTANCE = instance
                 return instance
             }
         }

@@ -1,5 +1,6 @@
 package com.qt46.easynotebook.notes
 
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,8 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,13 +32,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.qt46.easynotebook.R
-import com.qt46.easynotebook.data.NoteCategory
+import com.qt46.easynotebook.data.SortType
 
 @Composable
 @Preview(showBackground = true)
-fun DialogSelectCategory(
-    categories: List<NoteCategory> = listOf(),
-    onConfirmation: (Int) -> Unit = {},
+fun DialogSelectSortBy(
+    sortBy: List<SortType> = listOf(
+        SortType(
+            SortBy.MODIFIED,
+            R.string.sort_by_modified,
+            R.drawable.ic_category
+        ),
+        SortType(SortBy.REMINDER, R.string.sort_by_remider, R.drawable.ic_category),
+        SortType(SortBy.CREATED, R.string.sort_by_created, R.drawable.ic_category)
+    ),
+    onConfirmation: (SortType) -> Unit = {},
     onDismiss: () -> Unit = {}
 ) {
 
@@ -60,7 +67,7 @@ fun DialogSelectCategory(
             Column(Modifier.padding(horizontal = 18.dp)) {
                 Spacer(modifier = Modifier.height(18.dp))
                 Text(
-                    text = stringResource(id = R.string.change_color),
+                    text = stringResource(id = R.string.sort_by),
                     modifier = Modifier
                         .fillMaxWidth(),
                     textAlign = TextAlign.Start,
@@ -69,53 +76,27 @@ fun DialogSelectCategory(
                 )
                 Spacer(modifier = Modifier.height(9.dp))
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(9.dp)) {
-                    itemsIndexed(items = categories) { index, category ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .height(50.dp)
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(3.dp))
-                                .background(MaterialTheme.colorScheme.background)
-                                .clickable {
-                                    onConfirmation(index)
-                                }) {
+                    itemsIndexed(items = sortBy) { index, sortType ->
+                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                            .height(50.dp)
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(3.dp))
+                            .background(MaterialTheme.colorScheme.background)
+                            .clickable {
+                                onConfirmation(sortType)
+                            }) {
                             Spacer(modifier = Modifier.width(9.dp))
-                            Icon(
-                                painterResource(id = R.drawable.ic_category),
-                                null,
-                                tint = Color(category.color)
-                            )
+                            Icon(painterResource(id = R.drawable.ic_category), null)
                             Spacer(modifier = Modifier.width(9.dp))
                             Text(
-                                text = category.text,
+                                text = stringResource(id = sortType.nameId),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
                         }
                     }
                 }
-
-            }
-        }
-    }
-}
-
-enum class CustomDialogPosition {
-    BOTTOM, TOP
-}
-
-fun Modifier.customDialogModifier(pos: CustomDialogPosition) = layout { measurable, constraints ->
-
-    val placeable = measurable.measure(constraints)
-    layout(constraints.maxWidth, constraints.maxHeight) {
-        when (pos) {
-            CustomDialogPosition.BOTTOM -> {
-                placeable.place(0, constraints.maxHeight - placeable.height, 10f)
-            }
-
-            CustomDialogPosition.TOP -> {
-                placeable.place(0, 0, 10f)
+                Spacer(modifier = Modifier.height(18.dp))
             }
         }
     }

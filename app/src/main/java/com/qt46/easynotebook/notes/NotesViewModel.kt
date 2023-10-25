@@ -11,18 +11,17 @@ import com.qt46.easynotebook.constants.NoteCategorys
 import com.qt46.easynotebook.constants.formatter
 import com.qt46.easynotebook.data.Note
 import com.qt46.easynotebook.data.NoteCategory
-import com.qt46.easynotebook.data.NoteRepository
-import com.qt46.easynotebook.data.local.relations.NoteWithNoteItem
 import com.qt46.easynotebook.data.NoteItem
+import com.qt46.easynotebook.data.NoteRepository
+import com.qt46.easynotebook.data.SortType
+import com.qt46.easynotebook.data.local.relations.NoteWithNoteItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
@@ -59,12 +58,96 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
 
     }.flatMapLatest { (notes, category, order) ->
         flow {
-            emit(
-                if (category.categoryid==-1L){
-                    notes
-                }else{
-                    notes.filter { it.note.noteCategory == category.categoryid }
+            emit(if (category.categoryid == -1L) {
+                notes
+            } else {
+                notes.filter { it.note.noteCategory == category.categoryid }
+            }.sortedWith { note1, note2 ->
+                when (order) {
+                    SortBy.MODIFIED -> {
+                        if (LocalDateTime.parse(note1.note.modifiedTime, formatter)
+                                .isAfter(
+                                    LocalDateTime.parse(
+                                        note2.note.modifiedTime,
+                                        formatter
+                                    )
+                                )
+                        ) {
+                            -1
+                        } else if (LocalDateTime.parse(note1.note.modifiedTime, formatter)
+                                .isBefore(
+                                    LocalDateTime.parse(
+                                        note2.note.modifiedTime,
+                                        formatter
+                                    )
+                                )
+                        ) {
+                            1
+                        } else {
+                            0
+                        }
+                    }
+
+                    SortBy.REMINDER -> {
+                        if (LocalDateTime.parse(note1.note.reminder, formatter)
+                                .isAfter(
+                                    LocalDateTime.parse(
+                                        note2.note.modifiedTime,
+                                        formatter
+                                    )
+                                )
+                        ) {
+                            -1
+                        } else if (LocalDateTime.parse(note1.note.reminder, formatter)
+                                .isBefore(LocalDateTime.parse(note2.note.reminder, formatter))
+                        ) {
+                            1
+                        } else {
+                            0
+                        }
+                    }
+
+                    else -> {
+                        if (LocalDateTime.parse(note1.note.createdDate, formatter)
+                                .isAfter(LocalDateTime.parse(note2.note.createdDate, formatter))
+                        ) {
+                            -1
+                        } else if (LocalDateTime.parse(note1.note.createdDate, formatter)
+                                .isBefore(
+                                    LocalDateTime.parse(
+                                        note2.note.createdDate,
+                                        formatter
+                                    )
+                                )
+                        ) {
+                            1
+                        } else {
+                            0
+                        }
+                    }
                 }
+
+            }
+//            {
+//                println("CaLLED")
+//                when(order){
+//                        SortBy.MODIFIED->{
+////                            LocalDate.parse(it.note.modifiedTime, formatter)
+//                            it.note.heading.length
+//
+//                        }
+//                    SortBy.CREATED->{
+//                        it.note.heading.length
+////                        LocalDate.parse(it.note.createdDate, formatter)
+////                        it.note.createdDate
+//                    }
+//                    else->{
+//
+////                        LocalDate.parse(it.note.modifiedTime, formatter)
+//                        it.note.heading.length
+//                    }
+//                }
+//            }
 
             )
         }
@@ -102,22 +185,20 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
         }
     }
 
-    fun addNote(note: Note, items: List<String>,checkboxs:List<Boolean>) {
+    fun addNote(note: Note, items: List<String>, checkboxs: List<Boolean>) {
         viewModelScope.launch {
             val noteID = repository.addNote(note)
             for (idx in items.indices) {
                 if (items[idx].isNotEmpty()) {
                     repository.addNoteItem(
                         NoteItem(
-                            text = items[idx],
-                            noteId = noteID,
-                            isComplete =  checkboxs[idx]
+                            text = items[idx], noteId = noteID, isComplete = checkboxs[idx]
                         )
                     )
                 }
             }
 
-        } 
+        }
     }
 
     fun setCategory(category: NoteCategory) {
@@ -126,7 +207,7 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
         }
     }
 
-    fun setCurrentNote(noteWithNoteItem: NoteWithNoteItem){
+    fun setCurrentNote(noteWithNoteItem: NoteWithNoteItem) {
         _currentNote.update {
             noteWithNoteItem
         }
@@ -134,9 +215,14 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
 
     fun updateCurrentNote() {
         viewModelScope.launch {
-            repository.addNote(_currentNote.value.note.copy(modifiedTime = formatter.format(
-                LocalDateTime.now())))
-            for (item in _currentNote.value.items){
+            repository.addNote(
+                _currentNote.value.note.copy(
+                    modifiedTime = formatter.format(
+                        LocalDateTime.now()
+                    )
+                )
+            )
+            for (item in _currentNote.value.items) {
                 repository.addNoteItem(item)
             }
         }
@@ -151,21 +237,21 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
     fun updateTextNote(text: String) {
         _currentNote.update {
             it.copy(items = it.items.toMutableList().apply {
-                this[0]=this[0].copy(text=text)
+                this[0] = this[0].copy(text = text)
             })
         }
     }
 
     fun updateNoteCategory(categoryid: Long) {
         _currentNote.update {
-            it.copy(note = it.note.copy(noteCategory =categoryid))
+            it.copy(note = it.note.copy(noteCategory = categoryid))
         }
     }
 
     fun updateNoteItem(index: Int, text: String) {
         _currentNote.update {
             it.copy(items = it.items.toMutableList().apply {
-                this[index]=this[index].copy(text=text)
+                this[index] = this[index].copy(text = text)
             })
         }
     }
@@ -173,15 +259,22 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
     fun updateNoteItemCheckBox(index: Int) {
         _currentNote.update {
             it.copy(items = it.items.toMutableList().apply {
-                this[index]=this[index].copy(isComplete = !this[index].isComplete)
+                this[index] = this[index].copy(isComplete = !this[index].isComplete)
             })
         }
     }
-    fun addNoteItem(){
+
+    fun addNoteItem() {
         _currentNote.update {
             it.copy(items = it.items.toMutableList().apply {
                 add(NoteItem(text = "", noteId = it.note.noteId))
             })
+        }
+    }
+
+    fun sortNotes(sortType: SortType) {
+        _sortBy.update {
+            sortType.type
         }
     }
 }

@@ -5,8 +5,6 @@ import com.qt46.easynotebook.data.NoteCategory
 import java.time.format.DateTimeFormatter
 
 
-
-
 val NoteCategorys = listOf(
     NoteCategory(text = "Work"),
     NoteCategory(text = "Schools", color = 0xFF3BC700),
@@ -17,7 +15,8 @@ val NoteCategorys = listOf(
     NoteCategory(text = "", color = 0xFF673AB7),
     NoteCategory(text = "", color = 0xFF009688)
 )
-const val FIRST_TIME="first_time"
+const val FIRST_TIME = "first_time"
 val a = Color(0xFF673AB7)
 
-var formatter = DateTimeFormatter.ofPattern("MM-dd")
+var formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy  HH:mm:ss")
+

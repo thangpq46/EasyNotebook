@@ -14,12 +14,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.qt46.easynotebook.data.local.relations.NoteWithNoteItem
 
 @Composable
-fun NotePreview(noteWithNoteItem: NoteWithNoteItem,noteColor:Long,onClick:()->Unit) {
+fun NotePreview(noteWithNoteItem: NoteWithNoteItem, noteColor: Long, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .width(180.dp)
@@ -50,15 +47,27 @@ fun NotePreview(noteWithNoteItem: NoteWithNoteItem,noteColor:Long,onClick:()->Un
                     .fillMaxSize()
                     .padding(9.dp)
             ) {
-                Text(text = noteWithNoteItem.note.heading, style = MaterialTheme.typography.titleMedium, maxLines = 1)
-                Text(text = noteWithNoteItem.note.createdDate)
-                Divider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = MaterialTheme.colorScheme.onBackground)
-                
+                Text(
+                    text = noteWithNoteItem.note.heading,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1
+                )
+                Text(text = noteWithNoteItem.note.modifiedTime.substring(0, 5))
+                Divider(
+                    modifier = Modifier.fillMaxWidth(),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+
                 LazyColumn {
                     items(items = noteWithNoteItem.items) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            if (noteWithNoteItem.note.isCheckBox){
-                                Checkbox(checked = it.isComplete, onCheckedChange = {}, enabled = false)
+                            if (noteWithNoteItem.note.isCheckBox) {
+                                Checkbox(
+                                    checked = it.isComplete,
+                                    onCheckedChange = {},
+                                    enabled = false
+                                )
                             }
                             Text(
                                 text = it.text,

@@ -9,11 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -26,12 +24,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -138,13 +134,12 @@ fun AddNote(viewModel: NotesViewModel, navController: NavController, noteType: I
                 ),
                 singleLine = true,
                 colors = TextFieldDefaults.textFieldColors(
-                    containerColor=Color.Transparent
-                    ,
+                    containerColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent
                 )
 
-                )
+            )
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -160,8 +155,7 @@ fun AddNote(viewModel: NotesViewModel, navController: NavController, noteType: I
                     onValueChange = { text = it },
                     textStyle = MaterialTheme.typography.bodyMedium,
                     colors = TextFieldDefaults.textFieldColors(
-                        containerColor=Color.Transparent
-                        ,
+                        containerColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent
                     )
@@ -171,7 +165,7 @@ fun AddNote(viewModel: NotesViewModel, navController: NavController, noteType: I
                     itemsIndexed(items = listCheckNote) { index, text ->
                         Row {
 
-                            Checkbox(checked = listCheckBox[index], onCheckedChange ={
+                            Checkbox(checked = listCheckBox[index], onCheckedChange = {
                                 listCheckBox = listCheckBox.toMutableList().apply {
                                     this[index] = !this[index]
                                 }
@@ -195,9 +189,10 @@ fun AddNote(viewModel: NotesViewModel, navController: NavController, noteType: I
 
                     }
                 }
-                TextButton(onClick = { listCheckNote = listCheckNote.toMutableList().apply {
-                    add("")
-                }
+                TextButton(onClick = {
+                    listCheckNote = listCheckNote.toMutableList().apply {
+                        add("")
+                    }
                     listCheckBox = listCheckBox.toMutableList().apply {
                         add(false)
                     }
@@ -224,7 +219,7 @@ fun AddNote(viewModel: NotesViewModel, navController: NavController, noteType: I
                         reminder = null,
                         isPinned = false,
                         isCheckBox = true
-                    ), listCheckNote,listCheckBox
+                    ), listCheckNote, listCheckBox
                 )
                 navController.popBackStack()
             } else {

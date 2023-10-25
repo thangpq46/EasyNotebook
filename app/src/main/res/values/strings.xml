@@ -5,4 +5,8 @@
     <string name="add_note">Add</string>
     <string name="txt">Text</string>
     <string name="check_list">Checklist</string>
+    <string name="sort_by">Sort by</string>
+    <string name="sort_by_modified">Modified</string>
+    <string name="sort_by_remider">Reminder</string>
+    <string name="sort_by_created">Created</string>
 </resources>

@@ -7,8 +7,8 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.qt46.easynotebook.data.Note
 import com.qt46.easynotebook.data.NoteCategory
-import com.qt46.easynotebook.data.local.relations.NoteWithNoteItem
 import com.qt46.easynotebook.data.NoteItem
+import com.qt46.easynotebook.data.local.relations.NoteWithNoteItem
 import kotlinx.coroutines.flow.Flow
 
 
@@ -37,9 +37,9 @@ interface NoteDao {
     suspend fun getNoteCategoryWithNotes(categoryID: Long): List<NoteWithNoteItem>
 
     @Query("SELECT * FROM category")
-     fun getAllCategory():Flow<List<NoteCategory>>
+    fun getAllCategory(): Flow<List<NoteCategory>>
 
     @Transaction
     @Query("SELECT * FROM note ")
-    fun getAllNoteWithNoteItemsFlow():Flow<List<NoteWithNoteItem>>
+    fun getAllNoteWithNoteItemsFlow(): Flow<List<NoteWithNoteItem>>
 }

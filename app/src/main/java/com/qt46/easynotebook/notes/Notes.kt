@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -47,7 +46,7 @@ fun Notes(
     navController: NavController,
     selectTypeText: () -> Unit,
     selectTypeCheckList: () -> Unit
-){
+) {
     val activity = LocalContext.current as Activity
     val notes by viewModel.n.collectAsState()
     val categories by viewModel.categories.collectAsState()
@@ -62,7 +61,7 @@ fun Notes(
         DialogSelectCategory(categories, onConfirmation = {
             viewModel.setCategory(categories[it])
             showDialogSelectCategory = false
-            selectedCategory=it
+            selectedCategory = it
         }, onDismiss = {
             showDialogSelectCategory = false
         })
@@ -70,33 +69,47 @@ fun Notes(
     var showDialogSelectNoteType by remember {
         mutableStateOf(false)
     }
-    if (showDialogSelectNoteType){
+    if (showDialogSelectNoteType) {
         DialogSelectNoteType(onClickFirstBtn = {
             selectTypeText()
-            showDialogSelectNoteType=false
-        },{
+            showDialogSelectNoteType = false
+        }, {
             selectTypeCheckList()
-            showDialogSelectNoteType=false
-        },{
-            showDialogSelectNoteType=false
+            showDialogSelectNoteType = false
+        }, {
+            showDialogSelectNoteType = false
         })
     }
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(horizontal = 16.dp)) {
+    var showDialogSortNotes by remember {
+        mutableStateOf(false)
+    }
+    if (showDialogSortNotes) {
+        DialogSelectSortBy(onConfirmation = {
+            viewModel.sortNotes(it)
+            showDialogSortNotes = false
+        }, onDismiss = {
+            showDialogSortNotes = false
+        })
+
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+    ) {
         TopAppBar(title = { }, navigationIcon = {
             IconButton(onClick = { activity.finish() }) {
                 Icon(Icons.Default.ArrowBack, contentDescription = null)
             }
         }, actions = {
             IconButton(onClick = { showDialogSelectCategory = true }) {
-                if (selectedCategory!=-1){
+                if (selectedCategory != -1) {
                     Icon(
                         painterResource(id = R.drawable.ic_category),
                         null,
                         tint = Color(categories[selectedCategory].color)
                     )
-                }else{
+                } else {
                     Icon(
                         painterResource(id = R.drawable.ic_category),
                         null,
@@ -114,7 +127,8 @@ fun Notes(
                                             Color(0xFF673AB7),
                                             Color(0xFF009688)
                                         )
-                                    ), blendMode = BlendMode.SrcAtop)
+                                    ), blendMode = BlendMode.SrcAtop
+                                )
                             }
                         },
                     )
@@ -122,7 +136,7 @@ fun Notes(
 
             }
 
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = { showDialogSortNotes = true }) {
                 Icon(painterResource(id = R.drawable.ic_sort), null)
             }
             IconButton(onClick = { /*TODO*/ }) {
@@ -131,9 +145,16 @@ fun Notes(
         }
 
         )
-        LazyVerticalGrid(columns =GridCells.Adaptive(160.dp) , horizontalArrangement = Arrangement.spacedBy(9.dp), verticalArrangement = Arrangement.spacedBy(9.dp)){
-            items(items = notes){
-                NotePreview(it, noteColor = getColorByCategoryId(categories,it.note.noteCategory)){
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(160.dp),
+            horizontalArrangement = Arrangement.spacedBy(9.dp),
+            verticalArrangement = Arrangement.spacedBy(9.dp)
+        ) {
+            items(items = notes) {
+                NotePreview(
+                    it,
+                    noteColor = getColorByCategoryId(categories, it.note.noteCategory)
+                ) {
                     navController.navigate(Screen.UpdateNote.route)
                     viewModel.setCurrentNote(it)
                 }
@@ -142,20 +163,24 @@ fun Notes(
 
 
     }
-    Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.Bottom , modifier = Modifier.padding(16.dp)) {
+    Column(
+        horizontalAlignment = Alignment.End,
+        verticalArrangement = Arrangement.Bottom,
+        modifier = Modifier.padding(16.dp)
+    ) {
         FloatingActionButton(
-            onClick = { showDialogSelectNoteType=true },
+            onClick = { showDialogSelectNoteType = true },
             shape = CircleShape
-        ){
+        ) {
             Icon(Icons.Filled.Edit, "Extended floating action button.")
         }
     }
-    
+
 }
 
 fun getColorByCategoryId(categories: List<NoteCategory>, noteCategory: Long): Long {
     return categories.find {
-        it.categoryid==noteCategory
+        it.categoryid == noteCategory
     }?.color ?: 0xFF3BC700
 
 }
