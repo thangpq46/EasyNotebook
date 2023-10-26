@@ -41,10 +41,10 @@ fun DialogSelectSortBy(
         SortType(
             SortBy.MODIFIED,
             R.string.sort_by_modified,
-            R.drawable.ic_category
+            R.drawable.ic_modified_time
         ),
-        SortType(SortBy.REMINDER, R.string.sort_by_remider, R.drawable.ic_category),
-        SortType(SortBy.CREATED, R.string.sort_by_created, R.drawable.ic_category)
+        SortType(SortBy.REMINDER, R.string.sort_by_remider, R.drawable.ic_created_time),
+        SortType(SortBy.CREATED, R.string.sort_by_created, R.drawable.ic_remider_time)
     ),
     onConfirmation: (SortType) -> Unit = {},
     onDismiss: () -> Unit = {}
@@ -86,7 +86,7 @@ fun DialogSelectSortBy(
                                 onConfirmation(sortType)
                             }) {
                             Spacer(modifier = Modifier.width(9.dp))
-                            Icon(painterResource(id = R.drawable.ic_category), null)
+                            Icon(painterResource(id = sortType.iconID), null)
                             Spacer(modifier = Modifier.width(9.dp))
                             Text(
                                 text = stringResource(id = sortType.nameId),

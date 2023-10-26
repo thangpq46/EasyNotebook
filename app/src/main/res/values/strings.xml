@@ -9,4 +9,7 @@
     <string name="sort_by_modified">Modified</string>
     <string name="sort_by_remider">Reminder</string>
     <string name="sort_by_created">Created</string>
+    <string name="select">Select</string>
+    <string name="view">View</string>
+    <string name="feedback">Feedback</string>
 </resources>

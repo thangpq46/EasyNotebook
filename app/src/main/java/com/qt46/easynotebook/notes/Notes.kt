@@ -1,10 +1,17 @@
 package com.qt46.easynotebook.notes
 
 import android.app.Activity
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -12,11 +19,21 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -24,6 +41,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +51,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.traversalIndex
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.qt46.easynotebook.R
@@ -57,6 +79,7 @@ fun Notes(
     var selectedCategory by remember {
         mutableIntStateOf(-1)
     }
+    val textSearch by viewModel.textSearch.collectAsState()
     if (showDialogSelectCategory) {
         DialogSelectCategory(categories, onConfirmation = {
             viewModel.setCategory(categories[it])
@@ -92,6 +115,52 @@ fun Notes(
         })
 
     }
+    var showDropdownMenu by remember {
+        mutableStateOf(false)
+    }
+    var active by rememberSaveable { mutableStateOf(false) }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize(Alignment.TopEnd)
+    ) {
+        DropdownMenu(
+            offset = DpOffset(0.dp, 60.dp),
+            expanded = showDropdownMenu,
+            onDismissRequest = { showDropdownMenu = false }) {
+            DropdownMenuItem(leadingIcon = {
+                Icon(
+                    Icons.Default.ThumbUp,
+                    contentDescription = null
+                )
+            }, text = {
+                Text(
+                    text = stringResource(
+                        id = R.string.select
+                    )
+                )
+            }, onClick = { /*TODO*/ })
+            DropdownMenuItem(
+                leadingIcon = { Icon(Icons.Default.Menu, contentDescription = null) },
+                text = {Text(
+                    text = stringResource(
+                        id = R.string.view
+                    )
+                ) },
+                onClick = { /*TODO*/ })
+            DropdownMenuItem(
+                leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
+                text = { Text(
+                    text = stringResource(
+                        id = R.string.feedback
+                    )
+                ) },
+                onClick = { /*TODO*/ })
+        }
+
+    }
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -139,12 +208,46 @@ fun Notes(
             IconButton(onClick = { showDialogSortNotes = true }) {
                 Icon(painterResource(id = R.drawable.ic_sort), null)
             }
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = { showDropdownMenu = true }) {
                 Icon(Icons.Default.MoreVert, null)
             }
         }
 
         )
+val filterdNotes by viewModel.filterNotes.collectAsState()
+            SearchBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .semantics { traversalIndex = -1f },
+                query = textSearch,
+                onQueryChange = { viewModel.searchText(it) },
+                onSearch = { active = false },
+                active = active,
+                onActiveChange = {
+                    active = it
+                },
+                placeholder = { Text("Hinted search text") },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                ) {
+                    for( item in filterdNotes){
+                        ListItem(
+                            headlineContent = { Text(item.note.heading) },
+                            supportingContent = { Text(item.note.modifiedTime.substring(0,5)) },
+                            leadingContent = { Icon(Icons.Filled.Star, contentDescription = null) },
+                            modifier = Modifier
+                                .clickable {
+                                navController.navigate(Screen.UpdateNote.route)
+                    viewModel.setCurrentNote(item)
+                                    active = false
+                                }
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 4.dp)
+                        )
+                    }
+            }
+
+        Spacer(modifier = Modifier.height(18.dp))
         LazyVerticalGrid(
             columns = GridCells.Adaptive(160.dp),
             horizontalArrangement = Arrangement.spacedBy(9.dp),
@@ -152,8 +255,7 @@ fun Notes(
         ) {
             items(items = notes) {
                 NotePreview(
-                    it,
-                    noteColor = getColorByCategoryId(categories, it.note.noteCategory)
+                    it, noteColor = getColorByCategoryId(categories, it.note.noteCategory)
                 ) {
                     navController.navigate(Screen.UpdateNote.route)
                     viewModel.setCurrentNote(it)
@@ -169,8 +271,7 @@ fun Notes(
         modifier = Modifier.padding(16.dp)
     ) {
         FloatingActionButton(
-            onClick = { showDialogSelectNoteType = true },
-            shape = CircleShape
+            onClick = { showDialogSelectNoteType = true }, shape = CircleShape
         ) {
             Icon(Icons.Filled.Edit, "Extended floating action button.")
         }

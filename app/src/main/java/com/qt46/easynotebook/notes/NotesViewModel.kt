@@ -52,6 +52,8 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
     )
     val currentNote = _currentNote.asStateFlow()
 
+    private val _textSearch = MutableStateFlow("")
+    val textSearch = _textSearch.asStateFlow()
     @OptIn(ExperimentalCoroutinesApi::class)
     val n = combine(_allNotes, _category, _sortBy) { notes, category, order ->
         Triple(notes, category, order)
@@ -275,6 +277,22 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
     fun sortNotes(sortType: SortType) {
         _sortBy.update {
             sortType.type
+        }
+    }
+
+    val filterNotes = _allNotes.combine(_textSearch){ notes, text->
+        if (text.isNotEmpty()){
+            notes.filter { it.note.heading.contains(text,true)  }
+        }else{
+            listOf()
+        }
+
+    }.stateIn(
+        viewModelScope, SharingStarted.WhileSubscribed(5000), listOf()
+    )
+    fun searchText(text: String) {
+        _textSearch.update {
+            text
         }
     }
 }
