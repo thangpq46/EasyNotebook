@@ -19,4 +19,5 @@ const val FIRST_TIME = "first_time"
 val a = Color(0xFF673AB7)
 
 var formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy  HH:mm:ss")
+val IS_GRID = "is_grid"
 

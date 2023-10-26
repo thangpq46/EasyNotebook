@@ -1,6 +1,7 @@
 package com.qt46.easynotebook.notes
 
 import android.app.Activity
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,9 +13,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -58,8 +61,10 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.qt46.easynotebook.R
+import com.qt46.easynotebook.constants.FIRST_TIME
 import com.qt46.easynotebook.data.NoteCategory
 import com.qt46.easynotebook.data.Screen
+import com.qt46.easynotebook.data.ViewType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -119,6 +124,15 @@ fun Notes(
         mutableStateOf(false)
     }
     var active by rememberSaveable { mutableStateOf(false) }
+    var showDialogSelectViewType by remember {
+        mutableStateOf(false)
+    }
+    if (showDialogSelectViewType){
+        DialogSelectViewType(onListSelected = viewModel::changeViewType, onGridSelected = viewModel::changeViewType, onDismiss = {
+            showDialogSelectViewType=false
+        })
+    }
+    val viewType by viewModel.viewType.collectAsState()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -130,7 +144,7 @@ fun Notes(
             onDismissRequest = { showDropdownMenu = false }) {
             DropdownMenuItem(leadingIcon = {
                 Icon(
-                    Icons.Default.ThumbUp,
+                    painterResource(id = R.drawable.ic_select),
                     contentDescription = null
                 )
             }, text = {
@@ -147,7 +161,9 @@ fun Notes(
                         id = R.string.view
                     )
                 ) },
-                onClick = { /*TODO*/ })
+                onClick = { showDialogSelectViewType=true
+                    showDropdownMenu=false
+                })
             DropdownMenuItem(
                 leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
                 text = { Text(
@@ -237,8 +253,8 @@ val filterdNotes by viewModel.filterNotes.collectAsState()
                             leadingContent = { Icon(Icons.Filled.Star, contentDescription = null) },
                             modifier = Modifier
                                 .clickable {
-                                navController.navigate(Screen.UpdateNote.route)
-                    viewModel.setCurrentNote(item)
+                                    navController.navigate(Screen.UpdateNote.route)
+                                    viewModel.setCurrentNote(item)
                                     active = false
                                 }
                                 .fillMaxWidth()
@@ -248,7 +264,8 @@ val filterdNotes by viewModel.filterNotes.collectAsState()
             }
 
         Spacer(modifier = Modifier.height(18.dp))
-        LazyVerticalGrid(
+        if (viewType==ViewType.Grid){
+                    LazyVerticalGrid(
             columns = GridCells.Adaptive(160.dp),
             horizontalArrangement = Arrangement.spacedBy(9.dp),
             verticalArrangement = Arrangement.spacedBy(9.dp)
@@ -262,6 +279,20 @@ val filterdNotes by viewModel.filterNotes.collectAsState()
                 }
             }
         }
+        }else{
+
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(9.dp)){
+                items(items = notes) {
+                    NotePreviewList(
+                        it, noteColor = getColorByCategoryId(categories, it.note.noteCategory)
+                    ) {
+                        navController.navigate(Screen.UpdateNote.route)
+                        viewModel.setCurrentNote(it)
+                    }
+                }
+            }
+        }
+
 
 
     }

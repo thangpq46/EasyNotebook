@@ -1,5 +1,6 @@
 package com.qt46.easynotebook.notes
 
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -7,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.qt46.easynotebook.MyApplication
+import com.qt46.easynotebook.constants.IS_GRID
 import com.qt46.easynotebook.constants.NoteCategorys
 import com.qt46.easynotebook.constants.formatter
 import com.qt46.easynotebook.data.Note
@@ -14,6 +16,7 @@ import com.qt46.easynotebook.data.NoteCategory
 import com.qt46.easynotebook.data.NoteItem
 import com.qt46.easynotebook.data.NoteRepository
 import com.qt46.easynotebook.data.SortType
+import com.qt46.easynotebook.data.ViewType
 import com.qt46.easynotebook.data.local.relations.NoteWithNoteItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,7 +47,7 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
     private val _allNotes = repository.getAllNoteFlow().stateIn(
         scope, SharingStarted.WhileSubscribed(5000), listOf()
     )
-
+    var sharedPre : android.content.SharedPreferences? = null
     private val _currentNote = MutableStateFlow(
         NoteWithNoteItem(
             Note(0, heading = "", 0, null, false), listOf()
@@ -91,22 +94,27 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
                     }
 
                     SortBy.REMINDER -> {
-                        if (LocalDateTime.parse(note1.note.reminder, formatter)
-                                .isAfter(
-                                    LocalDateTime.parse(
-                                        note2.note.modifiedTime,
-                                        formatter
+                        if (note1.note.reminder!=null && note2.note.reminder!=null){
+                            if (LocalDateTime.parse(note1.note.reminder, formatter)
+                                    .isAfter(
+                                        LocalDateTime.parse(
+                                            note2.note.modifiedTime,
+                                            formatter
+                                        )
                                     )
-                                )
-                        ) {
-                            -1
-                        } else if (LocalDateTime.parse(note1.note.reminder, formatter)
-                                .isBefore(LocalDateTime.parse(note2.note.reminder, formatter))
-                        ) {
-                            1
-                        } else {
+                            ) {
+                                -1
+                            } else if (LocalDateTime.parse(note1.note.reminder, formatter)
+                                    .isBefore(LocalDateTime.parse(note2.note.reminder, formatter))
+                            ) {
+                                1
+                            } else {
+                                0
+                            }
+                        }else{
                             0
                         }
+
                     }
 
                     else -> {
@@ -165,6 +173,7 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val myRepository = (this[APPLICATION_KEY] as MyApplication).repository
+
                 NotesViewModel(
                     repository = myRepository,
                 )
@@ -294,5 +303,34 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
         _textSearch.update {
             text
         }
+    }
+
+    private val _viewType = MutableStateFlow(ViewType.Grid)
+    val viewType = _viewType.asStateFlow()
+
+    fun changeViewType(viewType: ViewType){
+        viewModelScope.launch {
+            _viewType.update {
+                viewType
+            }
+            sharedPre?.edit()?.putBoolean(IS_GRID, viewType==ViewType.Grid)?.apply()
+        }
+
+    }
+
+    fun initViewType(shared: SharedPreferences?) {
+        viewModelScope.launch {
+            sharedPre=shared
+            sharedPre?.getBoolean(IS_GRID,true)?.let { isGrid->
+                _viewType.update {
+                    if (isGrid){
+                        ViewType.Grid
+                    }else{
+                        ViewType.List
+                    }
+                }
+            }
+        }
+
     }
 }

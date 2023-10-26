@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,12 +30,12 @@ import com.qt46.easynotebook.constants.FIRST_TIME
 import com.qt46.easynotebook.data.ItemNoteType
 import com.qt46.easynotebook.data.Screen
 
-@OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
     private val viewModel: NotesViewModel by viewModels { NotesViewModel.Factory }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
+        viewModel.initViewType(sharedPref)
         sharedPref.getBoolean(FIRST_TIME, false).let {
             if (!it) {
                 viewModel.addCategory()
