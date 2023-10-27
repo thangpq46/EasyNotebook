@@ -77,6 +77,7 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }) { paddingValues ->
+
                     Surface(
                         modifier = Modifier
                             .fillMaxSize()
