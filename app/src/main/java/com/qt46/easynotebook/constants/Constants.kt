@@ -1,7 +1,10 @@
 package com.qt46.easynotebook.constants
 
 import androidx.compose.ui.graphics.Color
+import com.qt46.easynotebook.R
+import com.qt46.easynotebook.data.BottomBarItem
 import com.qt46.easynotebook.data.NoteCategory
+import com.qt46.easynotebook.data.Screen
 import java.time.format.DateTimeFormatter
 
 
@@ -21,3 +24,8 @@ val a = Color(0xFF673AB7)
 var formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy  HH:mm:ss")
 val IS_GRID = "is_grid"
 
+val BottomBarItems = listOf(
+    BottomBarItem(Screen.Notes, R.drawable.ic_notes, R.string.notes),
+    BottomBarItem(Screen.Notes, R.drawable.ic_remider_time, R.string.calender),
+    BottomBarItem(Screen.Menu, R.drawable.ic_menu, R.string.menu)
+)

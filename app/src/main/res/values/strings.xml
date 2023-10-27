@@ -14,4 +14,16 @@
     <string name="feedback">Feedback</string>
     <string name="view_list">List</string>
     <string name="view_grid">Grid</string>
+    <string name="menu">Menu</string>
+    <string name="notes">Notes</string>
+    <string name="calender">Calendar</string>
+    <string name="recycle_bin">Recycle Bin</string>
+    <string name="achive">Archive</string>
+    <string name="login">Login and Restore</string>
+    <string name="sign_in_sub_heading">Sign in and synchronize your data</string>
+    <string name="feedback_and_sugg">Feedback or suggestion</string>
+    <string name="setting">Settings</string>
+    <string name="setting_sub_heading">Security/Your personal preference</string>
+    <string name="widget">Widget</string>
+    <string name="widget_subhead">Sticky notes/Quick access toolbar</string>
 </resources>

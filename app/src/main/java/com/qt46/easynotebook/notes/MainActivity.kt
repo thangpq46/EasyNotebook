@@ -9,23 +9,30 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.AppTheme
+import com.qt46.easynotebook.constants.BottomBarItems
 import com.qt46.easynotebook.constants.FIRST_TIME
 import com.qt46.easynotebook.data.ItemNoteType
 import com.qt46.easynotebook.data.Screen
@@ -44,13 +51,32 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
+            var selectedItem by remember { mutableIntStateOf(0) }
             AppTheme {
                 val navController = rememberNavController()
                 var noteItemType by remember {
                     mutableStateOf(ItemNoteType.TEXT)
                 }
                 // A surface container using the 'background' color from the theme
-                Scaffold { paddingValues ->
+                Scaffold(bottomBar = {
+
+                    NavigationBar {
+                        BottomBarItems.forEachIndexed { index, item ->
+                            NavigationBarItem(
+                                icon = { Icon(painter = painterResource(id = item.iconId), contentDescription = null) },
+                                label = { Text(stringResource(id = item.labelID)) },
+                                selected = selectedItem == index,
+                                onClick = { selectedItem = index
+                                    navController.navigate(item.screen.route) {
+                                        popUpTo(0) {
+                                            inclusive = true
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }) { paddingValues ->
                     Surface(
                         modifier = Modifier
                             .fillMaxSize()
@@ -80,6 +106,9 @@ class MainActivity : ComponentActivity() {
                                     viewModel, navController
                                 )
                             }
+                            composable(Screen.Menu.route){
+                                Menu()
+                            }
                         }
                     }
                 }
@@ -90,14 +119,4 @@ class MainActivity : ComponentActivity() {
     }
 
 
-}
-
-@Composable
-@Preview(showBackground = true)
-fun Preview() {
-    ExtendedFloatingActionButton(
-        onClick = { },
-        icon = { Icon(Icons.Filled.Edit, "Extended floating action button.") },
-        text = { Text(text = "Add") },
-    )
 }
