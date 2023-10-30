@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 
@@ -47,10 +48,11 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
     private val _allNotes = repository.getAllNoteFlow().stateIn(
         scope, SharingStarted.WhileSubscribed(5000), listOf()
     )
-    var sharedPre : android.content.SharedPreferences? = null
+    private var sharedPre : SharedPreferences? = null
     private val _currentNote = MutableStateFlow(
         NoteWithNoteItem(
-            Note(0, heading = "", 0, null, false), listOf()
+            Note(0, heading = "", 0, null, false), listOf(),
+            NoteCategory()
         )
     )
     val currentNote = _currentNote.asStateFlow()
@@ -333,4 +335,18 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
         }
 
     }
+
+    val _dateSelected = MutableStateFlow(LocalDate.now().toString())
+    val dateSelected = _dateSelected.asStateFlow()
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val noteGroupByDate = _allNotes.flatMapLatest {
+        flow {
+            emit(it.groupBy {
+                it.note.modifiedTime.substring(0,10)
+            })
+        }
+
+    }.stateIn(
+        scope, SharingStarted.WhileSubscribed(5000), mapOf()
+    )
 }

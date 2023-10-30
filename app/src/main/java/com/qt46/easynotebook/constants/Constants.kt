@@ -21,11 +21,11 @@ val NoteCategorys = listOf(
 const val FIRST_TIME = "first_time"
 val a = Color(0xFF673AB7)
 
-var formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy  HH:mm:ss")
+var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss")
 val IS_GRID = "is_grid"
 
 val BottomBarItems = listOf(
     BottomBarItem(Screen.Notes, R.drawable.ic_notes, R.string.notes),
-    BottomBarItem(Screen.Notes, R.drawable.ic_remider_time, R.string.calender),
+    BottomBarItem(Screen.Calendar, R.drawable.ic_remider_time, R.string.calender),
     BottomBarItem(Screen.Menu, R.drawable.ic_menu, R.string.menu)
 )

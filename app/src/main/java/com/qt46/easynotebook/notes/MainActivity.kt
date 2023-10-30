@@ -110,6 +110,9 @@ class MainActivity : ComponentActivity() {
                             composable(Screen.Menu.route){
                                 Menu()
                             }
+                            composable(Screen.Calendar.route){
+                                CalendarUI(viewModel,navController)
+                            }
                         }
                     }
                 }

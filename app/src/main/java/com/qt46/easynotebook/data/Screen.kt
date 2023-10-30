@@ -9,4 +9,5 @@ sealed class Screen(val route: String, @StringRes val title: Int, @DrawableRes v
     data object Notes : Screen("notes", R.string.app_name, R.drawable.ic_launcher_foreground)
     data object UpdateNote : Screen("update", R.string.app_name, R.drawable.ic_launcher_foreground)
     data object Menu : Screen("menu", R.string.app_name, R.drawable.ic_launcher_foreground)
+    data object Calendar : Screen("calendar", R.string.app_name, R.drawable.ic_launcher_foreground)
 }

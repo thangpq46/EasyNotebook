@@ -4,15 +4,12 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import com.qt46.easynotebook.data.Note
 import com.qt46.easynotebook.data.NoteCategory
-import com.qt46.easynotebook.data.NoteItem
 
-data class NoteWithNoteItem(
-    @Embedded val note: Note, @Relation(
-        parentColumn = "noteId", entityColumn = "noteId"
-    ) val items: List<NoteItem>,
-    @Relation(
+data class NoteWithNoteCategory(
+    @Embedded
+    val note: Note,
+     @Relation(
         parentColumn = "noteCategory", entityColumn = "categoryid"
     )
-    val noteCategory: NoteCategory
-
+    val category: NoteCategory
 )

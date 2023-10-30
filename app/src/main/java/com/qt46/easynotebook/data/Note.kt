@@ -14,6 +14,8 @@ data class Note(
     @ColumnInfo val reminder: String?,
     @ColumnInfo val isPinned: Boolean = false,
     @ColumnInfo val isCheckBox: Boolean = false,
+    val maskAsComplete :Boolean = false,
+    val calendarDate: String = formatter.format(LocalDateTime.now()),
     val createdDate: String = formatter.format(LocalDateTime.now()),
     val modifiedTime: String = formatter.format(LocalDateTime.now())
 )

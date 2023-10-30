@@ -54,7 +54,7 @@ fun NotePreview(noteWithNoteItem: NoteWithNoteItem, noteColor: Long, onClick: ()
                     maxLines = 1,
                     fontWeight = FontWeight.Bold
                 )
-                Text(text = noteWithNoteItem.note.modifiedTime.substring(0, 5))
+                Text(text = noteWithNoteItem.note.modifiedTime.substring(5, 10))
                 Divider(
                     modifier = Modifier.fillMaxWidth(),
                     thickness = 1.dp,
