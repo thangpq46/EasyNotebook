@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.qt46.easynotebook.MyApplication
 import com.qt46.easynotebook.constants.IS_GRID
 import com.qt46.easynotebook.constants.NoteCategorys
@@ -362,6 +363,12 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
         _selectedDate.update {
             selectedDay
         }
+    }
+
+    private val _ggAccount = MutableStateFlow<GoogleSignInAccount?>(null)
+    val ggAccount = _ggAccount.asStateFlow()
+    fun setAccount(account: GoogleSignInAccount?) {
+        TODO("Not yet implemented")
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

@@ -76,4 +76,5 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.4")
     ksp("androidx.room:room-compiler:2.5.2")
     implementation("io.github.epicarchitect:calendar-compose-pager:1.0.5")
+    implementation ("com.google.android.gms:play-services-auth:20.7.0")
 }

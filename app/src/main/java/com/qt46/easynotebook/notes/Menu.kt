@@ -1,6 +1,5 @@
 package com.qt46.easynotebook.notes
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,16 +13,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,15 +30,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.qt46.easynotebook.R
 
+
 @Composable
-@Preview
-fun Menu() {
+
+fun Menu(viewModel: NotesViewModel,onClickLogin:()->Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(18.dp, 10.dp)
     ) {
-        MenuSection(heading = stringResource(id = R.string.login), subHeading = stringResource(id = R.string.sign_in_sub_heading))
+        val account by viewModel.ggAccount.collectAsState()
+        if (account!=null){
+            MenuSection(heading = account!!.email.toString(), subHeading = stringResource(id = R.string.sign_in_sub_heading))
+        }else{
+            MenuSection(heading = stringResource(id = R.string.login), subHeading = stringResource(id = R.string.sign_in_sub_heading), onClick = onClickLogin)
+        }
+
         Spacer(modifier = Modifier.height(9.dp))
 //        Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(5.dp)) {
 
@@ -107,11 +112,12 @@ fun MenuSection(
     leadingIcon: Painter = painterResource(id = R.drawable.ic_google),
     trailingIcon: Int? = R.drawable.ic_sync,
     heading: String = "Login and Restore", subHeading: String? = "Sign in to synchoronic your data",
-    sectionshape: RoundedCornerShape = RoundedCornerShape(10.dp)
+    sectionshape: RoundedCornerShape = RoundedCornerShape(10.dp),
+    onClick: () -> Unit={}
 ) {
     Button(modifier = Modifier
         .fillMaxWidth(),
-        onClick = {},
+        onClick = onClick,
          shape = sectionshape,
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
