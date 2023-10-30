@@ -69,6 +69,8 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
                 notes
             } else {
                 notes.filter { it.note.noteCategory == category.categoryid }
+            }.sortedByDescending {
+                it.note.isPinned
             }.sortedWith { note1, note2 ->
                 when (order) {
                     SortBy.MODIFIED -> {
@@ -346,6 +348,12 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
     fun updateCurrentNoteMask(b: Boolean) {
         _currentNote.update {
             it.copy(note = it.note.copy(maskAsComplete = b))
+        }
+    }
+
+    fun changePinstateCurrentNote() {
+        _currentNote.update {
+            it.copy(note = it.note.copy(isPinned = !it.note.isPinned))
         }
     }
 

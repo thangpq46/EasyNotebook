@@ -55,7 +55,7 @@ fun NotePreviewList(noteWithNoteItem: NoteWithNoteItem, noteColor: Long, onClick
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .fillMaxWidth(.86f)
+                    .fillMaxWidth(.82f)
                     .padding(9.dp)
             ) {
                 Text(
@@ -70,7 +70,9 @@ fun NotePreviewList(noteWithNoteItem: NoteWithNoteItem, noteColor: Long, onClick
             if (noteWithNoteItem.note.isCheckBox){
                 Icon(painterResource(id = R.drawable.ic_checklist), contentDescription = null, tint = MaterialTheme.colorScheme.outline, modifier = Modifier.requiredSize(18.dp))
             }
-
+            if (noteWithNoteItem.note.isPinned){
+                Icon(painter = painterResource(id = R.drawable.ic_pin), contentDescription = null)
+            }
         }
     }
 }

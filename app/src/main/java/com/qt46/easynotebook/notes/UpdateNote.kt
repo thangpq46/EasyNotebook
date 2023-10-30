@@ -148,8 +148,8 @@ fun UpdateNote(viewModel: NotesViewModel, navController: NavController) {
                 )
             }
 
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(Icons.Default.FavoriteBorder, null)
+            IconButton(onClick = { viewModel.changePinstateCurrentNote() }) {
+                Icon(if (note.note.isPinned) painterResource(id = R.drawable.ic_pin) else painterResource(id = R.drawable.ic_not_pin), null)
             }
             IconButton(onClick = { showDropdownMenu=true }) {
                 Icon(Icons.Default.MoreVert, null)

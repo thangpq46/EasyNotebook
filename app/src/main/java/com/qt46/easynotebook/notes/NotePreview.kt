@@ -2,6 +2,7 @@ package com.qt46.easynotebook.notes
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,15 +18,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import com.qt46.easynotebook.R
 import com.qt46.easynotebook.data.local.relations.NoteWithNoteItem
 
 @Composable
@@ -83,4 +88,15 @@ fun NotePreview(noteWithNoteItem: NoteWithNoteItem, noteColor: Long, onClick: ()
             }
         }
     }
+    if (noteWithNoteItem.note.isPinned){
+
+            Row(modifier = Modifier
+                .width(180.dp)
+                .height(220.dp)
+                .clip(RoundedCornerShape(5.dp)) ,horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.Top) {
+                Icon(painter = painterResource(id = R.drawable.ic_pin), contentDescription = null)
+            }
+
+    }
+
 }
