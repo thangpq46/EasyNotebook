@@ -195,14 +195,14 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
 
     fun addNote(note: Note, text: String) {
         viewModelScope.launch {
-            val noteID = repository.addNote(note)
+            val noteID = repository.addNote(note.copy(calendarDate = _selectedDate.value))
             repository.addNoteItem(NoteItem(text = text, noteId = noteID))
         }
     }
 
     fun addNote(note: Note, items: List<String>, checkboxs: List<Boolean>) {
         viewModelScope.launch {
-            val noteID = repository.addNote(note)
+            val noteID = repository.addNote(note.copy(calendarDate = _selectedDate.value))
             for (idx in items.indices) {
                 if (items[idx].isNotEmpty()) {
                     repository.addNoteItem(
@@ -356,12 +356,19 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
             it.copy(note = it.note.copy(isPinned = !it.note.isPinned))
         }
     }
+    private val _selectedDate = MutableStateFlow(LocalDate.now().toString())
+
+    fun setCalendarDate(selectedDay: String) {
+        _selectedDate.update {
+            selectedDay
+        }
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val noteGroupByDate = _allNotes.flatMapLatest {
         flow {
             emit(it.groupBy {
-                it.note.modifiedTime.substring(0,10)
+                it.note.calendarDate.substring(0,10)
             })
         }
 
