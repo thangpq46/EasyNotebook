@@ -111,7 +111,16 @@ class MainActivity : ComponentActivity() {
                                 Menu()
                             }
                             composable(Screen.Calendar.route){
-                                CalendarUI(viewModel,navController)
+                                CalendarUI(viewModel,{
+                                    noteItemType = ItemNoteType.TEXT
+                                    navController.navigate(Screen.AddNote.route)
+                                },{
+                                    noteItemType = ItemNoteType.CHECKBOX
+                                    navController.navigate(Screen.AddNote.route)
+                                }){
+                                    navController.navigate(Screen.UpdateNote.route)
+                                    viewModel.setCurrentNote(it)
+                                }
                             }
                         }
                     }

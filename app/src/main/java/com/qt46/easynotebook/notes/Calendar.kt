@@ -11,12 +11,18 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -44,6 +51,7 @@ import com.qt46.easynotebook.data.Note
 import com.qt46.easynotebook.data.NoteCategory
 import com.qt46.easynotebook.data.Screen
 import com.qt46.easynotebook.data.local.relations.NoteWithNoteCategory
+import com.qt46.easynotebook.data.local.relations.NoteWithNoteItem
 import epicarchitect.calendar.compose.basis.EpicMonth
 import epicarchitect.calendar.compose.basis.config.BasisEpicCalendarConfig
 import epicarchitect.calendar.compose.basis.config.ImmutableBasisEpicCalendarConfig
@@ -59,7 +67,7 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 
-fun CalendarUI(viewModel: NotesViewModel= androidx.lifecycle.viewmodel.compose.viewModel(),navController: NavController) {
+fun CalendarUI(viewModel: NotesViewModel= androidx.lifecycle.viewmodel.compose.viewModel(),selectTypeText: () -> Unit,selectTypeCheckList: () -> Unit,onNoteClick:(NoteWithNoteItem)->Unit) {
     var selectedDay by remember {
         mutableStateOf(LocalDate.now().toString())
     }
@@ -83,6 +91,20 @@ fun CalendarUI(viewModel: NotesViewModel= androidx.lifecycle.viewmodel.compose.v
 
         }
     )
+    var showDialogSelectNoteType by remember {
+        mutableStateOf(false)
+    }
+    if (showDialogSelectNoteType) {
+        DialogSelectNoteType(onClickFirstBtn = {
+            selectTypeText()
+            showDialogSelectNoteType = false
+        }, {
+            selectTypeCheckList()
+            showDialogSelectNoteType = false
+        }, {
+            showDialogSelectNoteType = false
+        })
+    }
     val currentDay = LocalDate.now()
     val coroutineScope = rememberCoroutineScope()
     Column {
@@ -160,19 +182,32 @@ fun CalendarUI(viewModel: NotesViewModel= androidx.lifecycle.viewmodel.compose.v
             )
         }
 
-        LazyColumn {
+        LazyColumn(Modifier.padding(horizontal = 9.dp)) {
             noteGroupByDate[selectedDay]?.let {
                 items(items = it) {item->
-                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable {
-                        viewModel.setCurrentNote(item)
-                        navController.navigate(Screen.UpdateNote.route)
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxSize().clickable {
+
+                        onNoteClick(item)
                     }) {
-                        Checkbox(checked = false, onCheckedChange = {})
-                        Text(text = item.note.heading, fontWeight = FontWeight.SemiBold)
+                        Checkbox(checked = item.note.maskAsComplete, onCheckedChange = {
+                            viewModel.updateNoteMask(item,it)
+                        })
+                        Text(text = item.note.heading, fontWeight = FontWeight.SemiBold,textDecoration = if (item.note.maskAsComplete) TextDecoration.LineThrough else null)
                     }
                 }
             }
 
+        }
+    }
+    Column(
+        horizontalAlignment = Alignment.End,
+        verticalArrangement = Arrangement.Bottom,
+        modifier = Modifier.padding(16.dp)
+    ) {
+        FloatingActionButton(
+            onClick = { showDialogSelectNoteType = true }, shape = CircleShape
+        ) {
+            Icon(Icons.Filled.Add, "Extended floating action button.")
         }
     }
 }

@@ -336,8 +336,13 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
 
     }
 
-    val _dateSelected = MutableStateFlow(LocalDate.now().toString())
-    val dateSelected = _dateSelected.asStateFlow()
+    fun updateNoteMask(noteWithNoteItem: NoteWithNoteItem, mask: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.addNote(note = noteWithNoteItem.note.copy(maskAsComplete = mask))
+        }
+
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     val noteGroupByDate = _allNotes.flatMapLatest {
         flow {
