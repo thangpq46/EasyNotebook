@@ -1,6 +1,7 @@
 package com.qt46.easynotebook.notes
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
@@ -17,9 +19,13 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -44,6 +50,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.qt46.easynotebook.R
@@ -75,6 +82,57 @@ fun UpdateNote(viewModel: NotesViewModel, navController: NavController) {
             showDialogSelectCategory = false
         })
     }
+    var showDropdownMenu by remember {
+        mutableStateOf(false)
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize(Alignment.TopEnd)
+    ) {
+        DropdownMenu(
+            offset = DpOffset(0.dp, 60.dp),
+            expanded = showDropdownMenu,
+            onDismissRequest = { showDropdownMenu = false }) {
+            if (note.note.maskAsComplete){
+                DropdownMenuItem(leadingIcon = {
+                    Icon(
+                        painterResource(id = R.drawable.ic_uncheck),
+                        contentDescription = null
+                    )
+                }, text = {
+                    Text(
+                        text = stringResource(
+                            id = R.string.un_mask
+                        )
+                    )
+                }, onClick = { viewModel.updateCurrentNoteMask(false) })
+            }else{
+                DropdownMenuItem(leadingIcon = {
+                    Icon(
+                        painterResource(id = R.drawable.ic_select),
+                        contentDescription = null
+                    )
+                }, text = {
+                    Text(
+                        text = stringResource(
+                            id = R.string.mask_as_complete
+                        )
+                    )
+                }, onClick = { viewModel.updateCurrentNoteMask(true) })
+            }
+
+            DropdownMenuItem(
+                leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
+                text = { Text(
+                    text = stringResource(
+                        id = R.string.feedback
+                    )
+                ) },
+                onClick = { /*TODO*/ })
+        }
+
+    }
     Column {
 
         TopAppBar(title = { }, navigationIcon = {
@@ -93,7 +151,7 @@ fun UpdateNote(viewModel: NotesViewModel, navController: NavController) {
             IconButton(onClick = { /*TODO*/ }) {
                 Icon(Icons.Default.FavoriteBorder, null)
             }
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = { showDropdownMenu=true }) {
                 Icon(Icons.Default.MoreVert, null)
             }
         }

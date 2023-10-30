@@ -26,4 +26,6 @@
     <string name="setting_sub_heading">Security/Your personal preference</string>
     <string name="widget">Widget</string>
     <string name="widget_subhead">Sticky notes/Quick access toolbar</string>
+    <string name="mask_as_complete">Check</string>
+    <string name="un_mask">Uncheck</string>
 </resources>

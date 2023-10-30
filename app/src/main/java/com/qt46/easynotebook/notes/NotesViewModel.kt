@@ -343,6 +343,12 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
 
     }
 
+    fun updateCurrentNoteMask(b: Boolean) {
+        _currentNote.update {
+            it.copy(note = it.note.copy(maskAsComplete = b))
+        }
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     val noteGroupByDate = _allNotes.flatMapLatest {
         flow {
